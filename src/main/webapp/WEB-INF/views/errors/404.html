@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404</title>
+</head>
+<body>
+<td th:switch="${origin}">
+
+    <span style="text-align: center;display: block;" th:case="'books'">
+    <a th:href="@{/books}">return to books</a>
+    </span>
+
+    <span style="text-align: center;display: block;" th:case="'people'">
+    <a th:href="@{/people}">return to people</a>
+    </span>
+
+    <div th:case="*">
+        <a th:href="/people"></a>
+    </div>
+</td>
+<h1 style="display: flex;
+    justify-content: center;
+    min-height: 500px;
+    align-items: center;">404</h1>
+
+</body>
+</html>

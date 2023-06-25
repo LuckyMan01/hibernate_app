@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>edit</title>
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/books/{id}(id=${book.getId()})}" th:object="${book}">
+    <leble for="title">Enter Title</leble>
+    <input type="text" th:field="*{title}" id="title" />
+    <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">title error</div>
+    <br/>
+
+    <leble for="author">Enter Author</leble>
+    <input type="text" th:field="*{author}" id="author" />
+    <div style="color:red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">author error</div>
+    <br/>
+    <leble for="year">Enter Year</leble>
+    <input type="text" th:field="*{year}" id="year" />
+    <div style="color:red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">year error</div>
+    <br/>
+    <input type="submit" value="Update!"/>
+</form>
+</body>
+</html>
