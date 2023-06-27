@@ -3,11 +3,15 @@ package com.example.hibernate.service;
 import com.example.hibernate.model.Book;
 import com.example.hibernate.model.Person;
 import com.example.hibernate.repository.BooksRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,17 +49,35 @@ public class BookService {
         booksRepository.deleteById(id);
     }
 
-    public Person findOwner(int id) {
-        return personService.fineOne(id);
-    }
-
     @Transactional
     public void assign(int id, Person selectedPerson) {
-        booksRepository.findById(id).get().setOwner(selectedPerson);
+        Book book = findOne(id);
+        Hibernate.initialize(book);
+        if (book.getOwner() != null) {
+            throw new RuntimeException(String.format("Book %s belong to other user %s",
+                    id, book.getOwner().getId()));
+        }
+        book.setOwner(selectedPerson);
     }
 
     @Transactional
     public void release(int id) {
-        booksRepository.findById(id).get().setOwner(null);
+        Book book = findOne(id);
+        Hibernate.initialize(book);
+        book.setOwner(null);
+    }
+
+    public List<Book> pagination(int page, int itemsPerPage) {
+        return booksRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
+    }
+
+    public List<Book> getBooksByPersonId(int id) {
+        Optional<Person> person = personService.fineOne(id);
+        if (person.isPresent()) {
+            Hibernate.initialize(person.get().getBooks());
+            return person.get().getBooks();
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

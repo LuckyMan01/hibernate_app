@@ -21,16 +21,16 @@ public class Book {
 
     @NotEmpty(message = "Author should not be empty")
     @Size(min = 2, max = 40, message = "Author should be between 2 and 40 characters")
+    @Column(name = "author")
     private String author;
 
     @Min(value = 100, message = "year should be not lower this value 1900  ")
-    private int years;
+    @Column(name = "year")
+    private int year;
 
     @ManyToOne()
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
-
-
 
     public Book() {
     }
@@ -39,7 +39,7 @@ public class Book {
         this.id = id;
         this.title = title;
         this.author = author;
-        this.years = year;
+        this.year = year;
     }
 
     public void setId(int id) {
@@ -66,12 +66,12 @@ public class Book {
         this.author = author;
     }
 
-    public int getYears() {
-        return years;
+    public int getYear() {
+        return year;
     }
 
-    public void setYears(int years) {
-        this.years = years;
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public Person getOwner() {
@@ -88,7 +88,7 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
-                ", year=" + years +
+                ", year=" + year +
                 '}';
     }
 
@@ -97,11 +97,11 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && years == book.years && Objects.equals(title, book.title) && Objects.equals(author, book.author);
+        return id == book.id && year == book.year && Objects.equals(title, book.title) && Objects.equals(author, book.author);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author, years);
+        return Objects.hash(id, title, author, year);
     }
 }

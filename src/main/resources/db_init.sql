@@ -1,1 +1,1 @@
-alter table person add column email varchar(250) unique;
+select * from  books

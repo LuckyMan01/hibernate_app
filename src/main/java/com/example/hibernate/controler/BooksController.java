@@ -4,10 +4,17 @@ import com.example.hibernate.model.Book;
 import com.example.hibernate.model.Person;
 import com.example.hibernate.service.BookService;
 import com.example.hibernate.service.PersonService;
+import com.example.hibernate.util.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Controller
@@ -21,17 +28,26 @@ public class BooksController {
         this.bookService = bookService;
     }
 
-
     @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("books", bookService.findAll());
+    public String index(Model model,
+                        @RequestParam(value = "page", required = false) Integer page,
+                        @RequestParam(value = "size", required = false) Integer size) {
+        if (page == null) {
+            model.addAttribute("books", bookService.findAll());
+        } else {
+//            http request http://localhost:8080/books?page=0&size=1
+            model.addAttribute("books_pagination", bookService.pagination(page, size))
+                    .addAttribute("pagination", new Pagination(0));
+
+        }
         return "/books/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
+
         Book bookOpt = bookService.findOne(id);
-        Person bookOwner = bookService.findOwner(id);
+        Person bookOwner = bookService.findOne(id).getOwner();
 
         if (bookOpt != null) {
             model.addAttribute("book", bookOpt);
@@ -83,15 +99,16 @@ public class BooksController {
         return "redirect:/books";
     }
 
-    @PatchMapping("{id}/release")
-    public String release(@PathVariable("id") int id) {
-        bookService.release(id);
-        return "redirect:/books/" + id;
-    }
 
     @PatchMapping("{id}/assign")
     public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson) {
         bookService.assign(id, selectedPerson);
+        return "redirect:/books/" + id;
+    }
+
+    @PatchMapping("{id}/release")
+    public String release(@PathVariable("id") int id) {
+        bookService.release(id);
         return "redirect:/books/" + id;
     }
 
