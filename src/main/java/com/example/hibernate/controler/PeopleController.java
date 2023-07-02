@@ -1,7 +1,7 @@
 package com.example.hibernate.controler;
 
-
 import com.example.hibernate.model.Person;
+import com.example.hibernate.service.BookService;
 import com.example.hibernate.service.PersonService;
 import com.example.hibernate.util.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/people")
@@ -18,23 +19,32 @@ public class PeopleController {
 
     private final PersonService personService;
     private final PersonValidator personValidator;
+    private final BookService bookService;
 
     @Autowired
-    public PeopleController(PersonService personService, PersonValidator personValidator) {
+    public PeopleController(PersonService personService, PersonValidator personValidator, BookService bookService) {
         this.personService = personService;
         this.personValidator = personValidator;
+        this.bookService = bookService;
     }
 
     @GetMapping()
     public String index(Model model) {
+
         model.addAttribute("people", personService.fineAll());
         return "people/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("person", personService.fineOne(id));
-        return "people/show";
+        Optional<Person> personOpt = personService.fineOne(id);
+        if (personOpt.isPresent()) {
+            model.addAttribute("person", personOpt.get());
+            model.addAttribute("books", bookService.getBooksByPersonId(id));
+            return "people/show";
+        }
+        model.addAttribute("origin", "people");
+        return "errors/404";
     }
 
     @GetMapping("/new")
@@ -45,7 +55,7 @@ public class PeopleController {
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
-        personValidator.validate(person,bindingResult);
+        personValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors())
             return "people/new";
 
@@ -55,7 +65,7 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("person", personService.fineOne(id));
+        model.addAttribute("person", personService.fineOne(id).get());
         return "people/edit";
     }
 

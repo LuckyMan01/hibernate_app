@@ -22,13 +22,12 @@ public class PersonService {
         this.peopleRepositories = peopleRepositories;
     }
 
-
     public List<Person> fineAll() {
         return peopleRepositories.findAll();
     }
 
-    public Person fineOne(int id) {
-        return peopleRepositories.findById(id).orElse(null);
+    public Optional<Person> fineOne(int id) {
+        return peopleRepositories.findById(id);
     }
 
     @Transactional

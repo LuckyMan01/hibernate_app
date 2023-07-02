@@ -8,13 +8,55 @@
     <title>Books</title>
 </head>
 <body>
-<div th:each="book: ${books}">
+<div th:if="${books}">
 
-    <a th:href="@{/books/{id}(id=${book.getId()})}"
-    th:text="${book.getAuthor() + ', ' + book.getTitle() + ', '+ book.getYear()}">books</a>
+    <div th:each="book: ${books}">
+        <a th:href="@{/books/{id}(id=${book.getId()})}"
+           th:text="${book.getAuthor() + ', ' + book.getTitle() + ', '+ book.getYear()}">books</a>
+    </div>
+    <br/>
+
+    <a style="margin:0 10px; text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{'/books?page=' + 0+ '&size=2'}">pagination page</a>
 </div>
+<div th:if="${books_pagination}">
+
+    <div th:each="book: ${books_pagination}">
+        <a th:href="@{/books/{id}(id=${book.getId()})}"
+           th:text="${book.getAuthor() + ', ' + book.getTitle() + ', '+ book.getYear()}">books</a>
+    </div>
+    <br/>
+
+    <a style="margin:0 10px;text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{'/books?page=' + ${pagination.incrementAndGet()} + '&size=2'}">next</a>
+    <a style="margin:0 10px; text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{'/books?page=' + ${pagination.decrementAndGet()} + '&size=2'}">previous</a>
+    <a style="margin:0 10px;text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{'/books'}">return to all books</a>
+
+
+</div>
+
+
 <br/>
 <hr/>
+<a style="margin:0 10px;text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{/books/search}">search</a>
 <a href="/books/new">Create new book</a>
 </body>
 </html>
