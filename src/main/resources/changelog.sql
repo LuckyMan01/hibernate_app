@@ -7,10 +7,14 @@ create table People(
 	created_at timestamp
 
 );
-create table Books(
+create table books(
 	id serial primary key,
 	title varchar(255) not null,
-	years int check(age>0),
+	years int check(years>0),
+	author varchar(255),
 	person_id bigint,
-	foreign key (person_id) references Person (id)
+	time_on_rent timestamp,
+	foreign key (person_id) references people (id)
 );
+
+drop table books

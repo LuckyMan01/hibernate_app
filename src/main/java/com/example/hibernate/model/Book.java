@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -28,9 +29,16 @@ public class Book {
     @Column(name = "year")
     private int year;
 
+    @Column(name = "time_on_rent")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date rentTime;
+
     @ManyToOne()
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
+
+    @Transient
+    private boolean isTimeForRent;
 
     public Book() {
     }
@@ -80,6 +88,22 @@ public class Book {
 
     public void setOwner(Person owner) {
         this.owner = owner;
+    }
+
+    public boolean isTimeForRent() {
+        return isTimeForRent;
+    }
+
+    public void setTimeForRent(boolean timeForRent) {
+        isTimeForRent = timeForRent;
+    }
+
+    public Date getRentTime() {
+        return rentTime;
+    }
+
+    public void setRentTime(Date rentTime) {
+        this.rentTime = rentTime;
     }
 
     @Override

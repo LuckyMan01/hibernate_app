@@ -5,16 +5,10 @@ import com.example.hibernate.model.Person;
 import com.example.hibernate.service.BookService;
 import com.example.hibernate.service.PersonService;
 import com.example.hibernate.util.Pagination;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 @Controller
@@ -28,17 +22,20 @@ public class BooksController {
         this.bookService = bookService;
     }
 
+    //            http request for pagination pages http://localhost:8080/books?page=0&size=1
+//            if you want to use sort by "year" or other name field, you must make this request /n
+//            http://localhost:8080/books?page=0&size=8&sort=year
     @GetMapping()
     public String index(Model model,
                         @RequestParam(value = "page", required = false) Integer page,
-                        @RequestParam(value = "size", required = false) Integer size) {
+                        @RequestParam(value = "size", required = false) Integer size,
+                        @RequestParam(value = "sort", required = false) String sort) {
         if (page == null) {
-            model.addAttribute("books", bookService.findAll());
+            model.addAttribute("books", sort == null ? bookService.findAll() : bookService.findAll(sort));
         } else {
-//            http request http://localhost:8080/books?page=0&size=1
-            model.addAttribute("books_pagination", bookService.pagination(page, size))
+            model.addAttribute("books_pagination",
+                            sort == null ? bookService.pagination(page, size) : bookService.pagination(page, size, sort))
                     .addAttribute("pagination", new Pagination(0));
-
         }
         return "/books/index";
     }
@@ -47,7 +44,7 @@ public class BooksController {
     public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
 
         Book bookOpt = bookService.findOne(id);
-        Person bookOwner = bookService.findOne(id).getOwner();
+        Person bookOwner = bookOpt.getOwner();
 
         if (bookOpt != null) {
             model.addAttribute("book", bookOpt);
@@ -58,7 +55,6 @@ public class BooksController {
             }
             return "books/show";
         }
-
 
         model.addAttribute("origin", "books");
         return "errors/404";
@@ -83,6 +79,16 @@ public class BooksController {
         model.addAttribute("book", bookService.findOne(id));
         return "books/edit";
     }
+
+    @GetMapping("/search")
+    public String search(Model model, @RequestParam(value = "search", required = false) String search) {
+        if (search != null) {
+            model.addAttribute("search_books", bookService.findByTitleStartWith(search));
+        }
+
+        return "books/search";
+    }
+
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("book") Book book, BindingResult bindingResult, @PathVariable("id") int id) {
@@ -111,5 +117,6 @@ public class BooksController {
         bookService.release(id);
         return "redirect:/books/" + id;
     }
+
 
 }

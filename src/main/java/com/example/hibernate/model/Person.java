@@ -30,11 +30,11 @@ public class Person {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "date_of_birth")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date createdAt;
 
     public Person() {

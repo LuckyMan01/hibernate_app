@@ -1,6 +1,5 @@
 package com.example.hibernate.controler;
 
-
 import com.example.hibernate.model.Person;
 import com.example.hibernate.service.BookService;
 import com.example.hibernate.service.PersonService;
@@ -41,7 +40,7 @@ public class PeopleController {
         Optional<Person> personOpt = personService.fineOne(id);
         if (personOpt.isPresent()) {
             model.addAttribute("person", personOpt.get());
-            model.addAttribute("books",bookService.getBooksByPersonId(id));
+            model.addAttribute("books", bookService.getBooksByPersonId(id));
             return "people/show";
         }
         model.addAttribute("origin", "people");

@@ -18,6 +18,7 @@ public class Pagination {
     public int incrementAndGet() {
         return ++count;
     }
+
     public int decrementAndGet() {
         return --count;
     }

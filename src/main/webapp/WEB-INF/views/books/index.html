@@ -40,20 +40,23 @@
     padding: 5px 20px;
     border-radius: 25px;
     color: #000;" th:href="@{'/books?page=' + ${pagination.decrementAndGet()} + '&size=2'}">previous</a>
-    <br/>
-    <a style="display: block;
-    text-align: center;
-    margin: 10px 10px; text-decoration: none;
+    <a style="margin:0 10px;text-decoration: none;
     background-color: #4444;
     padding: 5px 20px;
     border-radius: 25px;
     color: #000;" th:href="@{'/books'}">return to all books</a>
+
 
 </div>
 
 
 <br/>
 <hr/>
+<a style="margin:0 10px;text-decoration: none;
+    background-color: #4444;
+    padding: 5px 20px;
+    border-radius: 25px;
+    color: #000;" th:href="@{/books/search}">search</a>
 <a href="/books/new">Create new book</a>
 </body>
 </html>
